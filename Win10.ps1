@@ -1,7 +1,5 @@
 ##########
 # Win10 Initial Setup Script
-# Author: Disassembler <disassembler@dasm.cz>
-# Version: 2.0, 2017-01-08
 ##########
 
 # Ask for elevated permissions if required
@@ -14,54 +12,54 @@ If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]:
 $preset = @(
 	"DisableTelemetry",
 	"DisableWiFiSense",
-	"DisableSmartScreen",
+	"EnableSmartScreen",
 	"DisableWebSearch",
 	"DisableStartSuggestions",
-	"DisableLocationTracking",
-	"DisableFeedback",
+	"EnableLocationTracking",
+	"EnableFeedback",
 	"DisableAdvertisingID",
 	"DisableCortana",
-	"DisableErrorReporting",
-	"RestrictUpdateP2P",
+	"EnableErrorReporting",
+	"UnrestrictUpdateP2P",
 	"DisableAutoLogger",
 	"DisableDiagTrack",
 	"DisableWAPPush",
 
 	# "LowerUAC",
-	# "EnableSharingMappedDrives",
+	# "DisableSharingMappedDrives",
 	"DisableAdminShares",
-	"DisableFirewall",
-	# "DisableDefender",
+	"EnableFirewall",
+	"EnableDefender",
 	# "DisableUpdateMSRT",
-	# "DisableUpdateDriver",
+	"EnableUpdateDriver",
 	"DisableUpdateRestart",
 	"DisableHomeGroups",
 	"DisableRemoteAssistance",
 	"EnableRemoteDesktop",
 
-	"DisableActionCenter",
-	"DisableLockScreen",
+	"EnableActionCenter",
+	"EnableLockScreen",
 	# "DisableLockScreenWorkaround",
-	"DisableAutoplay",
-	"DisableAutorun",
-	"DisableStickyKeys",
-	"HideTaskbarSearchBox",
-	"HideTaskView",
-	"ShowSmallTaskbarIcons",
-	"ShowTaskbarTitles",
-	"ShowTrayIcons",
+	# "DisableAutoplay",
+	# "DisableAutorun",
+	# "DisableStickyKeys",
+	# "HideTaskbarSearchBox",
+	# "HideTaskView",
+	# "ShowSmallTaskbarIcons",
+	# "ShowTaskbarTitles",
+	# "ShowTrayIcons",
 	"ShowKnownExtensions",
 	"ShowHiddenFiles",
-	"ExplorerThisPC",
-	"ShowThisPCOnDesktop",
-	"HideDesktopFromThisPC",
-	"HideDocumentsFromThisPC",
-	"HideDownloadsFromThisPC",
-	"HideMusicFromThisPC",
-	"HidePicturesFromThisPC",
-	"HideVideosFromThisPC",
-	# "AddENKeyboard",
-	# "EnableNumlock",
+	# "ExplorerThisPC",
+	# "ShowThisPCOnDesktop",
+	# "HideDesktopFromThisPC",
+	# "HideDocumentsFromThisPC",
+	# "HideDownloadsFromThisPC",
+	# "HideMusicFromThisPC",
+	# "HidePicturesFromThisPC",
+	# "HideVideosFromThisPC",
+	"AddENKeyboard",
+	"EnableNumlock",
 
 	"DisableOneDrive",
 	"UninstallOneDrive",
@@ -69,7 +67,7 @@ $preset = @(
 	"DisableXboxDVR",
 	# "UninstallMediaPlayer",
 	# "UninstallWorkFolders",
-	# "InstallLinuxSubsystem",
+	"InstallLinuxSubsystem",
 	"SetPhotoViewerAssociation",
 	"AddPhotoViewerOpenWith",
 	"EnableF8BootMenu",
@@ -188,7 +186,7 @@ Function EnableLocationTracking {
 Function DisableFeedback {
 	Write-Host "Disabling Feedback..."
 	If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Siuf\Rules")) {
-		New-Item -Path "HKCU:\SOFTWARE\Microsoft\Siuf\Rules" -Force | Out-Null
+		New-Enable-Path "HKCU:\SOFTWARE\Microsoft\Siuf\Rules" -Force | Out-Null
 	}
 	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Siuf\Rules" -Name "NumberOfSIUFInPeriod" -Type DWord -Value 0
 }
@@ -259,7 +257,7 @@ Function EnableErrorReporting {
 }
 
 # Restrict Windows Update P2P only to local network
-Function RestrictUpdateP2P {
+Function UnrestrictUpdateP2P {
 	Write-Host "Restricting Windows Update P2P only to local network..."
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config" -Name "DODownloadMode" -Type DWord -Value 1
 	If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization")) {
@@ -407,7 +405,7 @@ Function EnableUpdateMSRT {
 }
 
 # Disable offering of drivers through Windows Update
-Function DisableUpdateDriver {
+Function EnableUpdateDriver {
 	Write-Host "Disabling driver offering through Windows Update..."
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching" -Name "SearchOrderConfig" -Type DWord -Value 0
 	If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate")) {
@@ -872,32 +870,32 @@ Function InstallOneDrive {
 # Uninstall default Microsoft applications
 Function UninstallBloatware {
 	Write-Host "Uninstalling default Microsoft applications..."
-	Get-AppxPackage "Microsoft.3DBuilder" | Remove-AppxPackage
+	# Get-AppxPackage "Microsoft.3DBuilder" | Remove-AppxPackage
 	Get-AppxPackage "Microsoft.BingFinance" | Remove-AppxPackage
 	Get-AppxPackage "Microsoft.BingNews" | Remove-AppxPackage
 	Get-AppxPackage "Microsoft.BingSports" | Remove-AppxPackage
 	Get-AppxPackage "Microsoft.BingWeather" | Remove-AppxPackage
 	Get-AppxPackage "Microsoft.Getstarted" | Remove-AppxPackage
 	Get-AppxPackage "Microsoft.MicrosoftOfficeHub" | Remove-AppxPackage
-	Get-AppxPackage "Microsoft.MicrosoftSolitaireCollection" | Remove-AppxPackage
-	Get-AppxPackage "Microsoft.Office.OneNote" | Remove-AppxPackage
-	Get-AppxPackage "Microsoft.People" | Remove-AppxPackage
-	Get-AppxPackage "Microsoft.SkypeApp" | Remove-AppxPackage
-	Get-AppxPackage "Microsoft.Windows.Photos" | Remove-AppxPackage
-	Get-AppxPackage "Microsoft.WindowsAlarms" | Remove-AppxPackage
-	Get-AppxPackage "Microsoft.WindowsCamera" | Remove-AppxPackage
-	Get-AppxPackage "microsoft.windowscommunicationsapps" | Remove-AppxPackage
-	Get-AppxPackage "Microsoft.WindowsMaps" | Remove-AppxPackage
-	Get-AppxPackage "Microsoft.WindowsPhone" | Remove-AppxPackage
-	Get-AppxPackage "Microsoft.WindowsSoundRecorder" | Remove-AppxPackage
-	Get-AppxPackage "Microsoft.XboxApp" | Remove-AppxPackage
-	Get-AppxPackage "Microsoft.ZuneMusic" | Remove-AppxPackage
-	Get-AppxPackage "Microsoft.ZuneVideo" | Remove-AppxPackage
+	# Get-AppxPackage "Microsoft.MicrosoftSolitaireCollection" | Remove-AppxPackage
+	# Get-AppxPackage "Microsoft.Office.OneNote" | Remove-AppxPackage
+	# Get-AppxPackage "Microsoft.People" | Remove-AppxPackage
+	# Get-AppxPackage "Microsoft.SkypeApp" | Remove-AppxPackage
+	# Get-AppxPackage "Microsoft.Windows.Photos" | Remove-AppxPackage
+	# Get-AppxPackage "Microsoft.WindowsAlarms" | Remove-AppxPackage
+	# Get-AppxPackage "Microsoft.WindowsCamera" | Remove-AppxPackage
+	# Get-AppxPackage "microsoft.windowscommunicationsapps" | Remove-AppxPackage
+	# Get-AppxPackage "Microsoft.WindowsMaps" | Remove-AppxPackage
+	# Get-AppxPackage "Microsoft.WindowsPhone" | Remove-AppxPackage
+	# Get-AppxPackage "Microsoft.WindowsSoundRecorder" | Remove-AppxPackage
+	# Get-AppxPackage "Microsoft.XboxApp" | Remove-AppxPackage
+	# Get-AppxPackage "Microsoft.ZuneMusic" | Remove-AppxPackage
+	# Get-AppxPackage "Microsoft.ZuneVideo" | Remove-AppxPackage
 	Get-AppxPackage "Microsoft.AppConnector" | Remove-AppxPackage
 	Get-AppxPackage "Microsoft.ConnectivityStore" | Remove-AppxPackage
-	Get-AppxPackage "Microsoft.Office.Sway" | Remove-AppxPackage
-	Get-AppxPackage "Microsoft.Messaging" | Remove-AppxPackage
-	Get-AppxPackage "Microsoft.CommsPhone" | Remove-AppxPackage
+	# Get-AppxPackage "Microsoft.Office.Sway" | Remove-AppxPackage
+	# Get-AppxPackage "Microsoft.Messaging" | Remove-AppxPackage
+	# Get-AppxPackage "Microsoft.CommsPhone" | Remove-AppxPackage
 	Get-AppxPackage "9E2F88E3.Twitter" | Remove-AppxPackage
 	Get-AppxPackage "king.com.CandyCrushSodaSaga" | Remove-AppxPackage
 	Get-AppxPackage "4DF9E0F8.Netflix" | Remove-AppxPackage
